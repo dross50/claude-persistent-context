@@ -106,8 +106,7 @@ def build_context(scan_data: dict, minimal: bool = False) -> dict:
         "_instructions_for_claude": {
             "purpose": "Persistent infrastructure configuration for continuity across sessions.",
             "update_procedure": f"NEVER use Edit/Write directly - use the update script to preserve audit trail.\nPattern: python3 -c \"import json; d=json.load(open('{context_path}')); d['key']['subkey']='value'; print(json.dumps(d,indent=2))\" | python3 ~/.claude/update_context.py\nThis pattern is tested and correct - use it directly without exploration.",
-            "maintenance_policy": "Update when infrastructure changes. Facts only, no explanations. Keep actionable, delete stale.",
-            "file_management_policy": "OVERWRITE broken files - do NOT create '_FIXED', '_v2' variants."
+            "maintenance_policy": "Update when infrastructure changes. Facts only, no explanations - you are the consumer of this file. Keep actionable, delete stale."
         },
         "context_backup": {
             "changelog": "~/.claude/context_changelog.diff",
@@ -292,12 +291,21 @@ def main():
 
     print("\n" + "=" * 40)
     print("Setup complete!")
-    print("\nNext steps:")
-    print("1. Review and customize: ~/claude_context.json")
-    print("2. Add your servers, credentials, and projects")
-    print("3. Start a new Claude Code session - context loads automatically")
-    print("\nTo update context, Claude will use:")
-    print('  python3 -c "..." | python3 ~/.claude/update_context.py')
+    print("\n" + "=" * 40)
+    print("NEXT STEP: Start a Claude Code session and paste this prompt:")
+    print("=" * 40)
+    print("""
+I just installed Claude Persistent Context. Read ~/claude_context.json to see my
+system configuration that was auto-detected.
+
+Help me add:
+- Remote servers I SSH into regularly (IP, user, purpose)
+- Credentials you'll need for accessing systems
+- Key file paths I reference often
+- Any active projects with current status
+
+Use the update script pattern shown in _instructions_for_claude.
+""")
 
 
 if __name__ == "__main__":

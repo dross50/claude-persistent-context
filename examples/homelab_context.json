@@ -2,8 +2,7 @@
   "_instructions_for_claude": {
     "purpose": "Persistent infrastructure configuration for continuity across sessions.",
     "update_procedure": "NEVER use Edit/Write directly - use the update script to preserve audit trail.\nPattern: python3 -c \"import json; d=json.load(open('/home/user/claude_context.json')); d['key']['subkey']='value'; print(json.dumps(d,indent=2))\" | python3 ~/.claude/update_context.py\nThis pattern is tested and correct - use it directly without exploration.",
-    "maintenance_policy": "Update when infrastructure changes. Facts only, no explanations. Keep actionable, delete stale.",
-    "file_management_policy": "OVERWRITE broken files - do NOT create '_FIXED', '_v2' variants."
+    "maintenance_policy": "Update when infrastructure changes. Facts only, no explanations - you are the consumer of this file. Keep actionable, delete stale."
   },
   "context_backup": {
     "changelog": "~/.claude/context_changelog.diff",
