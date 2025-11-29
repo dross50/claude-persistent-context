@@ -158,12 +158,19 @@ def build_context(scan_data: dict, minimal: bool = False) -> dict:
     return context
 
 
-def install_update_script(source_dir: Path, claude_dir: Path) -> None:
-    """Install the update script to ~/.claude/."""
+def install_update_script(source_dir: Path, claude_dir: Path, context_path: Path) -> None:
+    """Install the update script to ~/.claude/ with correct context path."""
     source = source_dir / "scripts" / "update_context.py"
     dest = claude_dir / "update_context.py"
 
-    shutil.copy(source, dest)
+    # Read template and substitute the context path
+    content = source.read_text()
+    content = content.replace(
+        'CONTEXT_FILE = Path.home() / "claude_context.json"',
+        f'CONTEXT_FILE = Path("{context_path}")'
+    )
+    dest.write_text(content)
+
     # Make executable
     dest.chmod(dest.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     print(f"  Installed update script: {dest}")
@@ -313,7 +320,7 @@ def main():
     # Install components
     print("\nInstalling components...")
     source_dir = Path(__file__).parent
-    install_update_script(source_dir, claude_dir)
+    install_update_script(source_dir, claude_dir, context_path)
     install_hook(claude_dir, context_path)
     initialize_changelog(claude_dir, context)
 
