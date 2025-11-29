@@ -2,6 +2,8 @@
 
 A self-maintaining knowledge base for Claude Code that persists across sessions with version-controlled audit trails.
 
+Vibe-coded by [David](https://github.com/YOUR_USERNAME) with Claude (Opus 4.5).
+
 ## The Problem
 
 Claude Code starts fresh each session. You re-explain your infrastructure, re-establish context, and waste tokens on information Claude should already know. Existing solutions (CLAUDE.md, MCP memory servers) either lack version control, don't self-update, or require external dependencies.
@@ -109,29 +111,22 @@ The scanner gets you started, but the real value comes from what you add:
 
 See `examples/` for reference configurations.
 
-## Configuration Options
+## Options
 
-### Minimal (Solo Developer)
 ```bash
 python3 setup.py --minimal
 ```
-Just hardware, network, and basic structure.
+Just hardware, network, and basic structure (no empty sections for servers, projects, etc).
 
-### Full (Homelab/Infrastructure)
 ```bash
-python3 setup.py --full
+python3 setup.py --context-path /custom/path/context.json
 ```
-Includes server inventory, project tracking, credential placeholders.
+Use a custom location for the context file instead of `~/claude_context.json`.
 
-## Customization
-
-### Adding Sections
-
-Edit the template in `templates/context_template.json` before running setup, or add sections directly to your generated context file using the update script.
-
-### Changing Hook Behavior
-
-Edit `~/.claude/hooks/load_context.sh` to customize what gets loaded at session start.
+```bash
+python3 setup.py --scan-only
+```
+Just run the scanner and print results without installing anything.
 
 ## Recovery
 
@@ -155,6 +150,18 @@ This system is opinionated:
 - **Actionable over archival**: Current projects and pending tasks, not completed history
 - **Minimal tokens**: Claude reads this every session - keep it lean
 - **Trust but verify**: Audit trail lets you catch and fix mistakes
+
+## Status
+
+**Working:**
+- Scanner runs on Linux (tested), macOS and Windows (untested but should work)
+- Multi-vendor GPU detection (NVIDIA, AMD, Intel, Apple Silicon)
+- Hook installation preserves existing SessionStart hooks
+- Custom context paths via `--context-path`
+
+**Known Limitations:**
+- macOS and Windows detection code is untested - feedback welcome
+- `templates/context_template.json` exists but isn't used (template is in setup.py)
 
 ## Contributing
 
