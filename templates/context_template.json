@@ -1,0 +1,52 @@
+{
+  "_instructions_for_claude": {
+    "purpose": "Persistent infrastructure configuration for continuity across sessions.",
+    "update_procedure": "NEVER use Edit/Write directly - use the update script to preserve audit trail.\nPattern: python3 -c \"import json; d=json.load(open('{{CONTEXT_PATH}}')); d['key']['subkey']='value'; print(json.dumps(d,indent=2))\" | python3 ~/.claude/update_context.py\nThis pattern is tested and correct - use it directly without exploration.",
+    "maintenance_policy": "Update when infrastructure changes. Facts only, no explanations. Keep actionable, delete stale.",
+    "file_management_policy": "OVERWRITE broken files - do NOT create '_FIXED', '_v2' variants."
+  },
+  "context_backup": {
+    "changelog": "~/.claude/context_changelog.diff",
+    "update_script": "~/.claude/update_context.py"
+  },
+  "last_updated": "{{TIMESTAMP}}",
+  "infrastructure_overview": {
+    "hostname": "{{HOSTNAME}}",
+    "platform": "{{PLATFORM}}",
+    "primary_ip": "{{PRIMARY_IP}}"
+  },
+  "hardware": {
+    "cpu": "{{CPU_MODEL}} ({{CPU_CORES}}c/{{CPU_THREADS}}t)",
+    "memory": "{{MEMORY_GB}}GB",
+    "gpus": "{{GPUS}}",
+    "storage": "{{STORAGE}}"
+  },
+  "network": {
+    "interfaces": "{{NETWORK_INTERFACES}}"
+  },
+  "ssh_keys": "{{SSH_KEYS}}",
+  "servers": {
+    "_comment": "Add remote servers you connect to regularly",
+    "example": {
+      "ip": "192.168.1.100",
+      "ssh": "user@hostname",
+      "purpose": "Description of what this server does"
+    }
+  },
+  "credentials": {
+    "_comment": "Store connection credentials for systems Claude needs to access",
+    "_warning": "Only store credentials you're comfortable with Claude seeing"
+  },
+  "key_paths": {
+    "_comment": "Important file paths Claude should remember"
+  },
+  "active_projects": {
+    "_comment": "Current work with status and blockers"
+  },
+  "pending_tasks": [
+    "_comment: Things Claude should remember to do or follow up on"
+  ],
+  "important_notes": [
+    "_comment: Gotchas, tribal knowledge, things that aren't obvious"
+  ]
+}

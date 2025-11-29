@@ -1,0 +1,86 @@
+{
+  "_instructions_for_claude": {
+    "purpose": "Persistent infrastructure configuration for continuity across sessions.",
+    "update_procedure": "NEVER use Edit/Write directly - use the update script to preserve audit trail.\nPattern: python3 -c \"import json; d=json.load(open('/home/user/claude_context.json')); d['key']['subkey']='value'; print(json.dumps(d,indent=2))\" | python3 ~/.claude/update_context.py\nThis pattern is tested and correct - use it directly without exploration.",
+    "maintenance_policy": "Update when infrastructure changes. Facts only, no explanations. Keep actionable, delete stale.",
+    "file_management_policy": "OVERWRITE broken files - do NOT create '_FIXED', '_v2' variants."
+  },
+  "context_backup": {
+    "changelog": "~/.claude/context_changelog.diff",
+    "update_script": "~/.claude/update_context.py"
+  },
+  "last_updated": "2025-01-15T10:00:00Z",
+  "infrastructure_overview": {
+    "hostname": "macbook-pro",
+    "platform": "macos",
+    "primary_ip": "192.168.1.50"
+  },
+  "hardware": {
+    "cpu": "Apple M3 Pro (12c)",
+    "memory": "36GB",
+    "storage": {
+      "disk0": "1TB internal SSD"
+    }
+  },
+  "network": {
+    "interfaces": {
+      "en0": "192.168.1.50 (Wi-Fi)"
+    }
+  },
+  "ssh_keys": {
+    "id_ed25519": {
+      "type": "ssh-ed25519",
+      "deployed_to": ["github", "staging", "production"]
+    }
+  },
+  "servers": {
+    "staging": {
+      "ip": "staging.example.com",
+      "ssh": "deploy@staging.example.com",
+      "purpose": "Staging environment",
+      "deployment": "GitHub Actions auto-deploy on merge to develop"
+    },
+    "production": {
+      "ip": "app.example.com",
+      "ssh": "deploy@app.example.com",
+      "purpose": "Production environment",
+      "deployment": "Manual deploy via GitHub Actions on release tag"
+    },
+    "db_replica": {
+      "ip": "db-replica.internal",
+      "ssh": "readonly@db-replica.internal",
+      "purpose": "Read-only DB replica for debugging"
+    }
+  },
+  "credentials": {
+    "aws_profile": "work-account (configured in ~/.aws/credentials)",
+    "docker_registry": "ghcr.io/company (auth via gh cli)"
+  },
+  "key_paths": {
+    "main_project": "~/code/company/main-app",
+    "dotfiles": "~/dotfiles",
+    "scripts": "~/scripts"
+  },
+  "active_projects": {
+    "auth_refactor": {
+      "status": "In review - PR #234",
+      "branch": "feature/oauth-migration",
+      "goal": "Migrate from session auth to OAuth2",
+      "notes": "Waiting on security review before merge"
+    },
+    "api_v2": {
+      "status": "Planning",
+      "goal": "Design new API versioning strategy"
+    }
+  },
+  "pending_tasks": [
+    "Update staging SSL cert (expires Feb 1)",
+    "Review dependabot PRs",
+    "Document new deployment process"
+  ],
+  "important_notes": [
+    "Production deploys require VPN connection",
+    "DB migrations must run during maintenance window (Sun 2am)",
+    "Use 'npm run dev:secure' for local HTTPS testing"
+  ]
+}

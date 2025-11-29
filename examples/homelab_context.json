@@ -1,0 +1,97 @@
+{
+  "_instructions_for_claude": {
+    "purpose": "Persistent infrastructure configuration for continuity across sessions.",
+    "update_procedure": "NEVER use Edit/Write directly - use the update script to preserve audit trail.\nPattern: python3 -c \"import json; d=json.load(open('/home/user/claude_context.json')); d['key']['subkey']='value'; print(json.dumps(d,indent=2))\" | python3 ~/.claude/update_context.py\nThis pattern is tested and correct - use it directly without exploration.",
+    "maintenance_policy": "Update when infrastructure changes. Facts only, no explanations. Keep actionable, delete stale.",
+    "file_management_policy": "OVERWRITE broken files - do NOT create '_FIXED', '_v2' variants."
+  },
+  "context_backup": {
+    "changelog": "~/.claude/context_changelog.diff",
+    "update_script": "~/.claude/update_context.py"
+  },
+  "last_updated": "2025-01-15T10:00:00Z",
+  "infrastructure_overview": {
+    "hostname": "workstation",
+    "platform": "linux",
+    "network_subnet": "192.168.1.0/24",
+    "primary_ip": "192.168.1.100"
+  },
+  "hardware": {
+    "cpu": "AMD Ryzen 9 5950X (16c/32t)",
+    "memory": "64GB DDR4-3600",
+    "gpus": {
+      "gpu0": {
+        "model": "NVIDIA GeForce RTX 4090",
+        "vram": "24GB",
+        "pcie_bus": "01:00.0",
+        "uuid": "GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      }
+    },
+    "storage": {
+      "nvme0n1": "Samsung 980 PRO 2TB - OS/Apps",
+      "nvme1n1": "WD Black SN850X 4TB - Data",
+      "sda": "Seagate Exos 16TB - Bulk storage"
+    }
+  },
+  "network": {
+    "interfaces": {
+      "enp5s0": "192.168.1.100 (primary)",
+      "enp6s0": "10.0.0.1 (internal lab network)"
+    }
+  },
+  "ssh_keys": {
+    "id_ed25519": {
+      "type": "ssh-ed25519",
+      "deployed_to": ["nas", "proxmox", "pi"]
+    }
+  },
+  "servers": {
+    "nas": {
+      "ip": "192.168.1.10",
+      "ssh": "admin@nas",
+      "purpose": "TrueNAS - primary storage",
+      "shares": ["/mnt/data", "/mnt/media"]
+    },
+    "proxmox": {
+      "ip": "192.168.1.20",
+      "ssh": "root@proxmox",
+      "web_ui": "https://192.168.1.20:8006",
+      "purpose": "Hypervisor"
+    },
+    "pi": {
+      "ip": "192.168.1.5",
+      "ssh": "pi@raspberrypi",
+      "purpose": "Pi-hole DNS"
+    }
+  },
+  "credentials": {
+    "proxmox_api": "user@pam!token-id=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "nas_api_key": "1-xxxxxxxxxxxxxxxxxxxx"
+  },
+  "key_paths": {
+    "docker_compose": "/home/user/docker",
+    "backups": "/mnt/data/backups",
+    "scripts": "/home/user/scripts"
+  },
+  "active_projects": {
+    "docker_migration": {
+      "status": "In progress - 3/7 containers migrated",
+      "goal": "Move all containers from bare metal to Proxmox LXC",
+      "blockers": ["Need to set up shared storage first"]
+    },
+    "monitoring_stack": {
+      "status": "Planning",
+      "goal": "Prometheus + Grafana for infrastructure monitoring"
+    }
+  },
+  "pending_tasks": [
+    "Configure NFS exports on NAS for Proxmox",
+    "Set up backup schedule for Proxmox VMs",
+    "Update Pi-hole blocklists"
+  ],
+  "important_notes": [
+    "NAS admin password is in Bitwarden, not stored here",
+    "Proxmox cluster requires all nodes up for quorum",
+    "Port 8080 on router forwards to workstation for dev testing"
+  ]
+}
