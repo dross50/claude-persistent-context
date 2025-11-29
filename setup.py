@@ -202,17 +202,30 @@ fi
     else:
         settings = {}
 
-    # Add SessionStart hook
+    # Add SessionStart hook (preserve existing hooks)
     if "hooks" not in settings:
         settings["hooks"] = {}
 
-    settings["hooks"]["SessionStart"] = [{
-        "matcher": "",
-        "hooks": [{
-            "type": "command",
-            "command": str(hook_script)
-        }]
-    }]
+    existing_session_hooks = settings["hooks"].get("SessionStart", [])
+
+    # Check if our hook is already installed
+    our_hook_command = str(hook_script)
+    already_installed = any(
+        any(h.get("command") == our_hook_command for h in entry.get("hooks", []))
+        for entry in existing_session_hooks
+    )
+
+    if not already_installed:
+        existing_session_hooks.append({
+            "matcher": "",
+            "hooks": [{
+                "type": "command",
+                "command": our_hook_command
+            }]
+        })
+        settings["hooks"]["SessionStart"] = existing_session_hooks
+    else:
+        print(f"  Hook already installed, skipping")
 
     settings_file.write_text(json.dumps(settings, indent=2) + "\n")
     print(f"  Updated settings: {settings_file}")

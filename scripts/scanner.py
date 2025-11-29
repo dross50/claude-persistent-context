@@ -65,26 +65,34 @@ class SystemScanner:
 
         if self.platform == "linux":
             lscpu = run_command(["lscpu"])
+            cores_per = None
+            sockets = None
             for line in lscpu.split("\n"):
-                if line.startswith("Model name:"):
-                    cpu_info["model"] = line.split(":", 1)[1].strip()
-                elif line.startswith("CPU(s):"):
-                    cpu_info["threads"] = int(line.split(":", 1)[1].strip())
-                elif line.startswith("Core(s) per socket:"):
-                    cores_per = int(line.split(":", 1)[1].strip())
-                elif line.startswith("Socket(s):"):
-                    sockets = int(line.split(":", 1)[1].strip())
-            if "cores_per" in dir() and "sockets" in dir():
+                try:
+                    if line.startswith("Model name:"):
+                        cpu_info["model"] = line.split(":", 1)[1].strip()
+                    elif line.startswith("CPU(s):"):
+                        cpu_info["threads"] = int(line.split(":", 1)[1].strip())
+                    elif line.startswith("Core(s) per socket:"):
+                        cores_per = int(line.split(":", 1)[1].strip())
+                    elif line.startswith("Socket(s):"):
+                        sockets = int(line.split(":", 1)[1].strip())
+                except (ValueError, IndexError):
+                    pass
+            if cores_per and sockets:
                 cpu_info["cores"] = cores_per * sockets
 
         elif self.platform == "macos":
-            cpu_info["model"] = run_command(["sysctl", "-n", "machdep.cpu.brand_string"])
+            cpu_info["model"] = run_command(["sysctl", "-n", "machdep.cpu.brand_string"]) or "Unknown"
             cores = run_command(["sysctl", "-n", "hw.physicalcpu"])
             threads = run_command(["sysctl", "-n", "hw.logicalcpu"])
-            if cores:
-                cpu_info["cores"] = int(cores)
-            if threads:
-                cpu_info["threads"] = int(threads)
+            try:
+                if cores:
+                    cpu_info["cores"] = int(cores)
+                if threads:
+                    cpu_info["threads"] = int(threads)
+            except ValueError:
+                pass
 
         elif self.platform == "windows":
             wmic = run_command("wmic cpu get name,numberofcores,numberoflogicalprocessors /format:csv", shell=True)
