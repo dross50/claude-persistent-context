@@ -34,17 +34,32 @@ def get_primary_ip(network_data: dict) -> str:
 def format_gpus(gpu_list: list) -> dict:
     """Format GPU list into structured dict."""
     if not gpu_list:
-        return {"note": "No NVIDIA GPUs detected"}
+        return {"note": "No GPUs detected"}
 
     gpus = {}
     for gpu in gpu_list:
-        key = f"gpu{gpu['index']}"
-        gpus[key] = {
+        idx = gpu.get("index", len(gpus))
+        key = f"gpu{idx}"
+
+        gpu_info = {
+            "vendor": gpu.get("vendor", "Unknown"),
             "model": gpu["model"],
-            "vram": f"{gpu['vram_mb'] // 1024}GB" if gpu["vram_mb"] >= 1024 else f"{gpu['vram_mb']}MB",
-            "pcie_bus": gpu["pcie_bus"],
-            "uuid": gpu["uuid"]
         }
+
+        # Add VRAM if available
+        vram_mb = gpu.get("vram_mb", 0)
+        if vram_mb:
+            gpu_info["vram"] = f"{vram_mb // 1024}GB" if vram_mb >= 1024 else f"{vram_mb}MB"
+
+        # Add PCIe bus if available (NVIDIA)
+        if "pcie_bus" in gpu:
+            gpu_info["pcie_bus"] = gpu["pcie_bus"]
+
+        # Add UUID if available (NVIDIA)
+        if "uuid" in gpu:
+            gpu_info["uuid"] = gpu["uuid"]
+
+        gpus[key] = gpu_info
     return gpus
 
 

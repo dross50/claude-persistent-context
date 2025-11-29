@@ -93,7 +93,7 @@ The scanner automatically detects:
 |----------|-------|-------|---------|
 | CPU model/cores | ✓ | ✓ | ✓ |
 | Memory | ✓ | ✓ | ✓ |
-| GPUs (NVIDIA) | ✓ | ✓ | ✓ |
+| GPUs (NVIDIA/AMD/Intel/Apple) | ✓ | ✓ | ✓ |
 | Storage devices | ✓ | ✓ | ✓ |
 | Network interfaces | ✓ | ✓ | ✓ |
 | SSH keys | ✓ | ✓ | ✓ |
