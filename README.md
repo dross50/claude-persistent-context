@@ -2,7 +2,7 @@
 
 A self-maintaining knowledge base for Claude Code that persists across sessions with version-controlled audit trails.
 
-Vibe-coded by [David](https://github.com/YOUR_USERNAME) with Claude (Opus 4.5).
+Vibe-coded by [David](https://github.com/dross50) with Claude (Opus 4.5).
 
 ## The Problem
 
@@ -28,7 +28,7 @@ This system creates:
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/claude-persistent-context.git
+git clone https://github.com/dross50/claude-persistent-context.git
 cd claude-persistent-context
 
 # Run the setup script
