@@ -22,3 +22,9 @@ Thumbs.db
 # Test outputs
 *.log
 test_context.json
+
+# User context files (NEVER commit these - they contain sensitive data!)
+claude_context.json
+.claude/
+*_context.json
+!examples/*_context.json

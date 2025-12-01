@@ -24,6 +24,24 @@ This system creates:
 - **Token-efficient**: Claude updates the file, not the conversation
 - **No external dependencies**: Pure Python, no databases or cloud services
 
+## ⚠️ Security Warning
+
+**IMPORTANT**: The context file will contain sensitive information about your infrastructure:
+- SSH keys and their locations
+- Server IP addresses and hostnames
+- Credentials and API tokens (if you add them)
+- Network topology
+
+**Never commit `~/claude_context.json` or `~/.claude/context_changelog.diff` to version control!**
+
+Add these to your `.gitignore`:
+```
+claude_context.json
+.claude/
+```
+
+The example files in this repo are sanitized with placeholder values. Your actual context file will contain real data.
+
 ## Quick Start
 
 ```bash
@@ -128,6 +146,24 @@ python3 setup.py --scan-only
 ```
 Just run the scanner and print results without installing anything.
 
+## Verification
+
+After installation, verify everything is working:
+
+```bash
+# Check that context file was created
+ls -lh ~/claude_context.json
+
+# Verify it's valid JSON and view infrastructure overview
+python3 -c "import json; from pathlib import Path; ctx=json.load(open(Path.home()/'claude_context.json')); print(json.dumps(ctx['infrastructure_overview'], indent=2))"
+
+# Check that update script is installed
+ls -lh ~/.claude/update_context.py
+
+# View the changelog baseline
+head -20 ~/.claude/context_changelog.diff
+```
+
 ## Recovery
 
 If Claude deletes important information:
@@ -162,10 +198,25 @@ This system is opinionated:
 **Known Limitations:**
 - macOS and Windows detection code is untested - feedback welcome
 - `templates/context_template.json` exists but isn't used (template is in setup.py)
+- SessionStart hooks use bash scripts - Windows users will need to manually load context or use WSL
+
+## Security Best Practices
+
+1. **Credential Storage**: Store sensitive credentials in a password manager (Bitwarden, 1Password, etc.) and reference them in the context file rather than storing them directly
+2. **File Permissions**: The setup script doesn't set restrictive permissions - consider running:
+   ```bash
+   chmod 600 ~/claude_context.json
+   chmod 600 ~/.claude/context_changelog.diff
+   ```
+3. **Backup Security**: If you back up your home directory, ensure backups are encrypted
+4. **Audit Trail**: Periodically review `~/.claude/context_changelog.diff` for any accidentally committed secrets
+5. **Rotation**: If you suspect the context file was exposed, rotate any credentials referenced in it
 
 ## Contributing
 
 Issues and PRs welcome. Please test on your platform before submitting.
+
+**Note for contributors**: Example files must use placeholder values only. Never commit real credentials, IPs, or identifying information.
 
 ## License
 

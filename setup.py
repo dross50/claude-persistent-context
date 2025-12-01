@@ -181,8 +181,30 @@ def install_hook(claude_dir: Path, context_path: Path) -> None:
     hooks_dir = claude_dir / "hooks"
     hooks_dir.mkdir(parents=True, exist_ok=True)
 
-    hook_script = hooks_dir / "load_context.sh"
-    hook_content = f'''#!/bin/bash
+    # Detect platform and create appropriate hook script
+    platform = sys.platform
+
+    if platform == "win32":
+        # Windows PowerShell script
+        hook_script = hooks_dir / "load_context.ps1"
+        hook_content = f'''# Claude Persistent Context - SessionStart Hook
+# Loads context JSON at session start
+
+$CONTEXT_FILE = "{context_path}"
+
+if (Test-Path $CONTEXT_FILE) {{
+    Get-Content $CONTEXT_FILE -Raw
+}} else {{
+    Write-Error "Context file not found: $CONTEXT_FILE"
+}}
+'''
+        hook_script.write_text(hook_content)
+        print(f"  Installed PowerShell hook script: {hook_script}")
+        print(f"  Note: Windows hooks may require manual configuration in Claude Code settings")
+    else:
+        # Unix-like systems (Linux, macOS)
+        hook_script = hooks_dir / "load_context.sh"
+        hook_content = f'''#!/bin/bash
 # Claude Persistent Context - SessionStart Hook
 # Loads context JSON at session start
 
@@ -194,10 +216,9 @@ else
     echo "Context file not found: $CONTEXT_FILE" >&2
 fi
 '''
-
-    hook_script.write_text(hook_content)
-    hook_script.chmod(hook_script.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    print(f"  Installed hook script: {hook_script}")
+        hook_script.write_text(hook_content)
+        hook_script.chmod(hook_script.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+        print(f"  Installed bash hook script: {hook_script}")
 
     # Create/update settings.json with hook configuration
     settings_file = claude_dir / "settings.json"
